@@ -36,152 +36,186 @@
             --c12b: hsl(210, 100%, 70%);
             --a1: 0.05s;
             --a2: 0.2s;
+            --text-on: white;
+            --text-off: rgb(131, 131, 131);
+
+            --size75: 75vw;
+            --size8: 8vw;
+            --size-7: -7vw;
+            --size4: 4vw;
+            --size0-5: 0.5vw;
         }
 
+        @media (min-aspect-ratio: 1/1) {
+            :root {
+                --size75: 75vh;
+                --size8: 8vh;
+                --size-7: -7vh;
+                --size4: 4vh;
+                --size0-5: 0.5vh;
+            }
+        }
+
+
         body{
-            color: rgb(200, 200, 200);
-            -webkit-text-stroke: 1px rgb(84, 84, 84);
+            /* center */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-off);
+            -webkit-text-stroke: 1px rgb(120, 120, 120);
             background-color: #0f0f0f;
         }
 
         .circle {
-            width: 75vw;
-            height: 75vw;
+            width: var(--size75);
+            height: var(--size75);
             position: relative;
-            margin: 8vw 8vw;
+            margin: var(--size8) var(--size8);
         }
 
         .slice {
-            width: 75vw;
-            height: 75vw;
+            width: var(--size75);
+            height: var(--size75);
             border-radius: 50%;
             position: absolute;
             transform-origin: center;
             overflow: visible;
             clip-path: polygon(50% 50%, 66.6% -15%, 33.4% -15%); /* Clipping path for the slice */
-            /* box-shadow: 0 0 0 0.5vw rgba(255,255,255,0.7), inset 0 0 0 0.5vw rgba(255,255,255,0.9);
+            /* box-shadow: 0 0 0 var(--size0-5) rgba(255,255,255,0.7), inset 0 0 0 var(--size0-5) rgba(255,255,255,0.9);
             transition: 0.1s; */
         }
 
         .slice:hover, .note-on{
-            /* box-shadow: 0 0 0 8vw rgba(255,255,255,0.7), inset 0 0 0 0.5vw rgba(255,255,255,0.9);
+            /* box-shadow: 0 0 0 var(--size8) rgba(255,255,255,0.7), inset 0 0 0 var(--size0-5) rgba(255,255,255,0.9);
             transition: 0.1s; */
         }
 
         .note-label {
-            margin-top: -7vw;
-            font-size: 4vw;
+            margin-top: var(--size-7);
+            font-size: var(--size4);
             font-family: Poppins;
             text-align: center;
         }
 
         .s1 {
             transform: rotate(0deg);
-            box-shadow: 0 0 0 0.5vw var(--c1a), inset 0 0 0 0.5vw var(--c1b);
+            box-shadow: 0 0 0 var(--size0-5) var(--c1a), inset 0 0 0 var(--size0-5) var(--c1b);
             transition: var(--a2);
         }
         .s1:hover, .s1.note-on{
-            color: rgb(255,255,255) !important;
-            box-shadow: 0 0 0 8vw var(--c1a), inset 0 0 0 0.5vw var(--c1b);
+            color: var(--text-on) !important;
+            box-shadow: 0 0 0 var(--size8) var(--c1a), inset 0 0 0 var(--size0-5) var(--c1b);
             transition: var(--a1);
         }
         .s2 {
             transform: rotate(30deg);
-            box-shadow: 0 0 0 0.5vw var(--c2a), inset 0 0 0 0.5vw var(--c2b);
+            box-shadow: 0 0 0 var(--size0-5) var(--c2a), inset 0 0 0 var(--size0-5) var(--c2b);
             transition: var(--a2);
         }
         .s2:hover, .s2.note-on{
-            box-shadow: 0 0 0 8vw var(--c2a), inset 0 0 0 0.5vw var(--c2b);
+            color: var(--text-on) !important;
+            box-shadow: 0 0 0 var(--size8) var(--c2a), inset 0 0 0 var(--size0-5) var(--c2b);
             transition: var(--a1);
         }
         .s3 {
             transform: rotate(60deg);
-            box-shadow: 0 0 0 0.5vw var(--c3a), inset 0 0 0 0.5vw var(--c3b);
+            box-shadow: 0 0 0 var(--size0-5) var(--c3a), inset 0 0 0 var(--size0-5) var(--c3b);
             transition: var(--a2);
         }
         .s3:hover, .s3.note-on{
-            box-shadow: 0 0 0 8vw var(--c3a), inset 0 0 0 0.5vw var(--c3b);
+            color: var(--text-on) !important;
+            box-shadow: 0 0 0 var(--size8) var(--c3a), inset 0 0 0 var(--size0-5) var(--c3b);
             transition: var(--a1);
         }
         .s4 {
             transform: rotate(90deg);
-            box-shadow: 0 0 0 0.5vw var(--c4a), inset 0 0 0 0.5vw var(--c4b);
+            box-shadow: 0 0 0 var(--size0-5) var(--c4a), inset 0 0 0 var(--size0-5) var(--c4b);
             transition: var(--a2);
         }
         .s4:hover, .s4.note-on{
-            box-shadow: 0 0 0 8vw var(--c4a), inset 0 0 0 0.5vw var(--c4b);
+            color: var(--text-on) !important;
+            box-shadow: 0 0 0 var(--size8) var(--c4a), inset 0 0 0 var(--size0-5) var(--c4b);
             transition: var(--a1);
         }
         .s5 {
             transform: rotate(120deg);
-            box-shadow: 0 0 0 0.5vw var(--c5a), inset 0 0 0 0.5vw var(--c5b);
+            box-shadow: 0 0 0 var(--size0-5) var(--c5a), inset 0 0 0 var(--size0-5) var(--c5b);
             transition: var(--a2);
         }
         .s5:hover, .s5.note-on{
-            box-shadow: 0 0 0 8vw var(--c5a), inset 0 0 0 0.5vw var(--c5b);
+            color: var(--text-on) !important;
+            box-shadow: 0 0 0 var(--size8) var(--c5a), inset 0 0 0 var(--size0-5) var(--c5b);
             transition: var(--a1);
         }
         .s6 {
             transform: rotate(150deg);
-            box-shadow: 0 0 0 0.5vw var(--c6a), inset 0 0 0 0.5vw var(--c6b);
+            box-shadow: 0 0 0 var(--size0-5) var(--c6a), inset 0 0 0 var(--size0-5) var(--c6b);
             transition: var(--a2);
         }
         .s6:hover, .s6.note-on{
-            box-shadow: 0 0 0 8vw var(--c6a), inset 0 0 0 0.5vw var(--c6b);
+            color: var(--text-on) !important;
+            box-shadow: 0 0 0 var(--size8) var(--c6a), inset 0 0 0 var(--size0-5) var(--c6b);
             transition: var(--a1);
         }
         .s7 {
             transform: rotate(180deg);
-            box-shadow: 0 0 0 0.5vw var(--c7a), inset 0 0 0 0.5vw var(--c7b);
+            box-shadow: 0 0 0 var(--size0-5) var(--c7a), inset 0 0 0 var(--size0-5) var(--c7b);
             transition: var(--a2);
         }
         .s7:hover, .s7.note-on{
-            box-shadow: 0 0 0 8vw var(--c7a), inset 0 0 0 0.5vw var(--c7b);
+            color: var(--text-on) !important;
+            box-shadow: 0 0 0 var(--size8) var(--c7a), inset 0 0 0 var(--size0-5) var(--c7b);
             transition: var(--a1);
         }
         .s8 {
             transform: rotate(210deg);
-            box-shadow: 0 0 0 0.5vw var(--c8a), inset 0 0 0 0.5vw var(--c8b);
+            box-shadow: 0 0 0 var(--size0-5) var(--c8a), inset 0 0 0 var(--size0-5) var(--c8b);
             transition: var(--a2);
         }
         .s8:hover, .s8.note-on{
-            box-shadow: 0 0 0 8vw var(--c8a), inset 0 0 0 0.5vw var(--c8b);
+            color: var(--text-on) !important;
+            box-shadow: 0 0 0 var(--size8) var(--c8a), inset 0 0 0 var(--size0-5) var(--c8b);
             transition: var(--a1);
         }
         .s9 {
             transform: rotate(240deg);
-            box-shadow: 0 0 0 0.5vw var(--c9a), inset 0 0 0 0.5vw var(--c9b);
+            box-shadow: 0 0 0 var(--size0-5) var(--c9a), inset 0 0 0 var(--size0-5) var(--c9b);
             transition: var(--a2);
         }
         .s9:hover, .s9.note-on{
-            box-shadow: 0 0 0 8vw var(--c9a), inset 0 0 0 0.5vw var(--c9b);
+            color: var(--text-on) !important;
+            box-shadow: 0 0 0 var(--size8) var(--c9a), inset 0 0 0 var(--size0-5) var(--c9b);
             transition: var(--a1);
         }
         .s10 {
             transform: rotate(270deg);
-            box-shadow: 0 0 0 0.5vw var(--c10a), inset 0 0 0 0.5vw var(--c10b);
+            box-shadow: 0 0 0 var(--size0-5) var(--c10a), inset 0 0 0 var(--size0-5) var(--c10b);
             transition: var(--a2);
         }
         .s10:hover, .s10.note-on{
-            box-shadow: 0 0 0 8vw var(--c10a), inset 0 0 0 0.5vw var(--c10b);
+            color: var(--text-on) !important;
+            box-shadow: 0 0 0 var(--size8) var(--c10a), inset 0 0 0 var(--size0-5) var(--c10b);
             transition: var(--a1);
         }
         .s11 {
             transform: rotate(300deg);
-            box-shadow: 0 0 0 0.5vw var(--c11a), inset 0 0 0 0.5vw var(--c11b);
+            box-shadow: 0 0 0 var(--size0-5) var(--c11a), inset 0 0 0 var(--size0-5) var(--c11b);
             transition: var(--a2);
         }
         .s11:hover, .s11.note-on{
-            box-shadow: 0 0 0 8vw var(--c11a), inset 0 0 0 0.5vw var(--c11b);
+            color: var(--text-on) !important;
+            box-shadow: 0 0 0 var(--size8) var(--c11a), inset 0 0 0 var(--size0-5) var(--c11b);
             transition: var(--a1);
         }
         .s12 {
             transform: rotate(330deg);
-            box-shadow: 0 0 0 0.5vw var(--c12a), inset 0 0 0 0.5vw var(--c12b);
+            box-shadow: 0 0 0 var(--size0-5) var(--c12a), inset 0 0 0 var(--size0-5) var(--c12b);
             transition: var(--a2);
         }
         .s12:hover, .s12.note-on{
-            box-shadow: 0 0 0 8vw var(--c12a), inset 0 0 0 0.5vw var(--c12b);
+            color: var(--text-on) !important;
+            box-shadow: 0 0 0 var(--size8) var(--c12a), inset 0 0 0 var(--size0-5) var(--c12b);
             transition: var(--a1);
         }
 
