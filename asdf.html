@@ -1,116 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>30 Degree Circle Slice</title>
-<style>
-    body{
-        color: white;
-        background-color: #0f0f0f;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Midi Circle Of Fifths</title>
+    <script src="https://cdn.jsdelivr.net/npm/webmidi@latest/dist/iife/webmidi.iife.js"></script>
+    <style>
 
-    .circle {
-        width: 75vw;
-        height: 75vw;
-        position: relative;
-        margin: 8vw 8vw;
-    }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
-    .text-circle {
-        width: 100vw;
-        height: 100vw;
-        position: absolute;
-        top:0;
-        transform-origin: center;
-    }
+        :root {
+            --c1a: hsl(240, 100%, 65%);
+            --c1b: hsl(240, 100%, 70%);
+            --c2a: hsl(270, 100%, 65%);
+            --c2b: hsl(270, 100%, 70%);
+            --c3a: hsl(300, 100%, 65%);
+            --c3b: hsl(300, 100%, 70%);
+            --c4a: hsl(330, 100%, 65%);
+            --c4b: hsl(330, 100%, 70%);
+            --c5a: hsl(0, 100%, 65%);
+            --c5b: hsl(0, 100%, 70%);
+            --c6a: hsl(30, 100%, 65%);
+            --c6b: hsl(30, 100%, 70%);
+            --c7a: hsl(60, 100%, 65%);
+            --c7b: hsl(60, 100%, 70%);
+            --c8a: hsl(90, 100%, 65%);
+            --c8b: hsl(90, 100%, 70%);
+            --c9a: hsl(120, 100%, 65%);
+            --c9b: hsl(120, 100%, 70%);
+            --c10a: hsl(150, 100%, 65%);
+            --c10b: hsl(150, 100%, 70%);
+            --c11a: hsl(180, 100%, 65%);
+            --c11b: hsl(180, 100%, 70%);
+            --c12a: hsl(210, 100%, 65%);
+            --c12b: hsl(210, 100%, 70%);
+            --a1: 0.05s;
+            --a2: 0.2s;
+        }
 
-    .text{ 
-        width: 100vw;
-        height: 100vw;   
-        position: absolute;
-        transform-origin: center;
-    }
+        body{
+            color: white;
+            background-color: #0f0f0f;
+        }
 
-    .slice {
-        width: 75vw;
-        height: 75vw;
-        border-radius: 50%;
-        position: absolute;
-        transform-origin: center;
-        overflow: visible;
-        clip-path: polygon(50% 50%, 66.6% -15%, 33.4% -15%); /* Clipping path for the slice */
-        box-shadow: 0 0 0 1vw rgba(255,255,255,0.7), inset 0 0 0 1vw rgba(255,255,255,0.9);
-        transition: 0.1s;
-    }
-    .slice:hover{
-        box-shadow: 0 0 0 8vw rgba(255,255,255,0.7), inset 0 0 0 1vw rgba(255,255,255,0.9);
-        transition: 0.1s;
-    }
+        .circle {
+            width: 75vw;
+            height: 75vw;
+            position: relative;
+            margin: 8vw 8vw;
+        }
 
-    .s1 {transform: rotate(0deg);}
-    .s2 {transform: rotate(30deg);}
-    .s3 {transform: rotate(60deg);}
-    .s4 {transform: rotate(90deg);}
-    .s5 {transform: rotate(120deg);}
-    .s6 {transform: rotate(150deg);}
-    .s7 {transform: rotate(180deg);}
-    .s8 {transform: rotate(210deg);}
-    .s9 {transform: rotate(240deg);}
-    .s10 {transform: rotate(270deg);}
-    .s11 {transform: rotate(300deg);}
-    .s12 {transform: rotate(330deg);}
+        .slice {
+            width: 75vw;
+            height: 75vw;
+            border-radius: 50%;
+            position: absolute;
+            transform-origin: center;
+            overflow: visible;
+            clip-path: polygon(50% 50%, 66.6% -15%, 33.4% -15%); /* Clipping path for the slice */
+            /* box-shadow: 0 0 0 0.5vw rgba(255,255,255,0.7), inset 0 0 0 0.5vw rgba(255,255,255,0.9);
+            transition: 0.1s; */
+        }
 
-    p{
-        text-align: center;
-        font-size: 5vw;
-    }
-    .s2 > p {transform: rotate(-30deg);}
-    .s3 > p {transform: rotate(-60deg);}
-    .s4 > p {transform: rotate(-90deg);}
-    .s5 > p {transform: rotate(-120deg);}
-    .s6 > p {transform: rotate(-150deg);}
-    .s7 > p {transform: rotate(-180deg);}
-    .s8 > p {transform: rotate(-210deg);}
-    .s9 > p {transform: rotate(-240deg);}
-    .s10 > p {transform: rotate(-270deg);}
-    .s11 > p {transform: rotate(-300deg);}
-    .s12 > p {transform: rotate(-330deg);}
+        .slice:hover, .note-on{
+            /* box-shadow: 0 0 0 8vw rgba(255,255,255,0.7), inset 0 0 0 0.5vw rgba(255,255,255,0.9);
+            transition: 0.1s; */
+        }
 
-  
-</style>
+        .note-label {
+            margin-top: -7vw;
+            font-size: 4vw;
+            font-family: Poppins;
+            text-align: center;
+        }
+
+        .s1 {
+            transform: rotate(0deg);
+            box-shadow: 0 0 0 0.5vw var(--c1a), inset 0 0 0 0.5vw var(--c1b);
+            transition: var(--a2);
+        }
+        .s1:hover, .s1.note-on{
+            box-shadow: 0 0 0 8vw var(--c1a), inset 0 0 0 0.5vw var(--c1b);
+            transition: var(--a1);
+        }
+        .s2 {
+            transform: rotate(30deg);
+            box-shadow: 0 0 0 0.5vw var(--c2a), inset 0 0 0 0.5vw var(--c2b);
+            transition: var(--a2);
+        }
+        .s2:hover, .s2.note-on{
+            box-shadow: 0 0 0 8vw var(--c2a), inset 0 0 0 0.5vw var(--c2b);
+            transition: var(--a1);
+        }
+        .s3 {
+            transform: rotate(60deg);
+            box-shadow: 0 0 0 0.5vw var(--c3a), inset 0 0 0 0.5vw var(--c3b);
+            transition: var(--a2);
+        }
+        .s3:hover, .s3.note-on{
+            box-shadow: 0 0 0 8vw var(--c3a), inset 0 0 0 0.5vw var(--c3b);
+            transition: var(--a1);
+        }
+        .s4 {
+            transform: rotate(90deg);
+            box-shadow: 0 0 0 0.5vw var(--c4a), inset 0 0 0 0.5vw var(--c4b);
+            transition: var(--a2);
+        }
+        .s4:hover, .s4.note-on{
+            box-shadow: 0 0 0 8vw var(--c4a), inset 0 0 0 0.5vw var(--c4b);
+            transition: var(--a1);
+        }
+        .s5 {
+            transform: rotate(120deg);
+            box-shadow: 0 0 0 0.5vw var(--c5a), inset 0 0 0 0.5vw var(--c5b);
+            transition: var(--a2);
+        }
+        .s5:hover, .s5.note-on{
+            box-shadow: 0 0 0 8vw var(--c5a), inset 0 0 0 0.5vw var(--c5b);
+            transition: var(--a1);
+        }
+        .s6 {
+            transform: rotate(150deg);
+            box-shadow: 0 0 0 0.5vw var(--c6a), inset 0 0 0 0.5vw var(--c6b);
+            transition: var(--a2);
+        }
+        .s6:hover, .s6.note-on{
+            box-shadow: 0 0 0 8vw var(--c6a), inset 0 0 0 0.5vw var(--c6b);
+            transition: var(--a1);
+        }
+        .s7 {
+            transform: rotate(180deg);
+            box-shadow: 0 0 0 0.5vw var(--c7a), inset 0 0 0 0.5vw var(--c7b);
+            transition: var(--a2);
+        }
+        .s7:hover, .s7.note-on{
+            box-shadow: 0 0 0 8vw var(--c7a), inset 0 0 0 0.5vw var(--c7b);
+            transition: var(--a1);
+        }
+        .s8 {
+            transform: rotate(210deg);
+            box-shadow: 0 0 0 0.5vw var(--c8a), inset 0 0 0 0.5vw var(--c8b);
+            transition: var(--a2);
+        }
+        .s8:hover, .s8.note-on{
+            box-shadow: 0 0 0 8vw var(--c8a), inset 0 0 0 0.5vw var(--c8b);
+            transition: var(--a1);
+        }
+        .s9 {
+            transform: rotate(240deg);
+            box-shadow: 0 0 0 0.5vw var(--c9a), inset 0 0 0 0.5vw var(--c9b);
+            transition: var(--a2);
+        }
+        .s9:hover, .s9.note-on{
+            box-shadow: 0 0 0 8vw var(--c9a), inset 0 0 0 0.5vw var(--c9b);
+            transition: var(--a1);
+        }
+        .s10 {
+            transform: rotate(270deg);
+            box-shadow: 0 0 0 0.5vw var(--c10a), inset 0 0 0 0.5vw var(--c10b);
+            transition: var(--a2);
+        }
+        .s10:hover, .s10.note-on{
+            box-shadow: 0 0 0 8vw var(--c10a), inset 0 0 0 0.5vw var(--c10b);
+            transition: var(--a1);
+        }
+        .s11 {
+            transform: rotate(300deg);
+            box-shadow: 0 0 0 0.5vw var(--c11a), inset 0 0 0 0.5vw var(--c11b);
+            transition: var(--a2);
+        }
+        .s11:hover, .s11.note-on{
+            box-shadow: 0 0 0 8vw var(--c11a), inset 0 0 0 0.5vw var(--c11b);
+            transition: var(--a1);
+        }
+        .s12 {
+            transform: rotate(330deg);
+            box-shadow: 0 0 0 0.5vw var(--c12a), inset 0 0 0 0.5vw var(--c12b);
+            transition: var(--a2);
+        }
+        .s12:hover, .s12.note-on{
+            box-shadow: 0 0 0 8vw var(--c12a), inset 0 0 0 0.5vw var(--c12b);
+            transition: var(--a1);
+        }
+
+
+        .s1 > .note-label {transform: rotate(0deg);}
+        .s2 > .note-label {transform: rotate(-30deg);}
+        .s3 > .note-label {transform: rotate(-60deg);}
+        .s4 > .note-label {transform: rotate(-90deg);}
+        .s5 > .note-label {transform: rotate(-120deg);}
+        .s6 > .note-label {transform: rotate(-150deg);}
+        .s7 > .note-label {transform: rotate(-180deg);}
+        .s8 > .note-label {transform: rotate(-210deg);}
+        .s9 > .note-label {transform: rotate(-240deg);}
+        .s10 > .note-label {transform: rotate(-270deg);}
+        .s11 > .note-label {transform: rotate(-300deg);}
+        .s12 > .note-label {transform: rotate(-330deg);}
+
+        
+    
+    </style>
 </head>
 <body>
 
     <div class="circle">
-        <div class="slice s1"></div>
-        <div class="slice s2"></div>
-        <div class="slice s3"></div>
-        <div class="slice s4"></div>
-        <div class="slice s5"></div>
-        <div class="slice s6"></div>
-        <div class="slice s7"></div>
-        <div class="slice s8"></div>
-        <div class="slice s9"></div>
-        <div class="slice s10"></div>
-        <div class="slice s11"></div>
-        <div class="slice s12"></div>
-    </div>
-    <div class="text-circle">
-        <div class="text s1"><p>1</p></div>
-        <div class="text s2"><p>5</p></div>
-        <div class="text s3"><p>2</p></div>
-        <div class="text s4"><p>6</p></div>
-        <div class="text s5"><p>3</p></div>
-        <div class="text s6"><p>7</p></div>
-        <div class="text s7"><p>4</p></div>
-        <div class="text s8"><p>8</p></div>
-        <div class="text s9"><p>5</p></div>
-        <div class="text s10"><p>9</p></div>
-        <div class="text s11"><p>6</p></div>
-        <div class="text s12"><p>10</p></div>
+        <div class="slice s1"  id="n1" ><p class="note-label" >1</p></div>
+        <div class="slice s2"  id="n2" ><p class="note-label" >5</p></div>
+        <div class="slice s3"  id="n3" ><p class="note-label" >2</p></div>
+        <div class="slice s4"  id="n4" ><p class="note-label" >6</p></div>
+        <div class="slice s5"  id="n5" ><p class="note-label" >3</p></div>
+        <div class="slice s6"  id="n6" ><p class="note-label" >7</p></div>
+        <div class="slice s7"  id="n7" ><p class="note-label">♭5</p></div>
+        <div class="slice s8"  id="n8" ><p class="note-label">♭2</p></div>
+        <div class="slice s9"  id="n9" ><p class="note-label">♭6</p></div>
+        <div class="slice s10" id="n10"><p class="note-label">♭3</p></div>
+        <div class="slice s11" id="n11"><p class="note-label">♭7</p></div>
+        <div class="slice s12" id="n12"><p class="note-label" >4</p></div>
     </div>
 
 
 </body>
+<script>
+    const midiMappings = {
+        'c': 1,
+        'c#': 2,
+        'd': 3,
+        'd#': 4,
+        'e': 5,
+        'f': 6,
+        'f#': 7,
+        'g': 8,
+        'g#': 9,
+        'a': 10,
+        'a#': 11,
+        'b': 12
+    }
+    const circleOf5thsMapping = {
+        1: 1,
+        2: 8,
+        3: 3,
+        4: 10,
+        5: 5,
+        6: 12,
+        7: 7,
+        8: 2,
+        9: 9,
+        10: 4,
+        11: 11,
+        12: 6
+    }
+    const keyboardMappings = {
+        'a': 1,
+        'w': 2,
+        's': 3,
+        'e': 4,
+        'd': 5,
+        'f': 6,
+        't': 7,
+        'g': 8,
+        'y': 9,
+        'h': 10,
+        'u': 11,
+        'j': 12,
+        'k': 1,
+        'o': 2,
+        'l': 3,
+        'p': 4,
+        ';': 5,
+        "'": 6,
+        ']': 7,
+
+    }
+
+    window.addEventListener('keydown', function(e){
+        if(e.key in keyboardMappings){
+            document.getElementById(`n${circleOf5thsMapping[keyboardMappings[e.key]]}`).classList.add('note-on');
+        }
+    });
+
+    window.addEventListener('keyup', function(e){
+        if(e.key in keyboardMappings){
+            document.getElementById(`n${circleOf5thsMapping[keyboardMappings[e.key]]}`).classList.remove('note-on');
+        }
+    });
+
+    WebMidi.enable((err) => {
+        if (err) {
+            console.error('WebMidi could not be enabled:', err);
+            return;
+        }
+        if (WebMidi.inputs.length === 0) {
+            console.warn('No MIDI input devices available.');
+            return;
+        }
+        const mySynthInput = WebMidi.inputs[0];
+        const mySynthOutput = WebMidi.outputs[0];
+
+        mySynthInput.channels[1].addListener('noteon', (e) => {
+            const note = `${e.note.name}${e.note.accidental??""}`.toLowerCase()
+            //console.log(note)
+            document.getElementById(`n${circleOf5thsMapping[midiMappings[note]]}`).classList.add('note-on');
+            mySynthOutput.sendNoteOn(60, 127);
+        });
+        mySynthInput.channels[1].addListener('noteoff', (e) => {
+            const note = `${e.note.name}${e.note.accidental??""}`.toLowerCase()
+            document.getElementById(`n${circleOf5thsMapping[midiMappings[note]]}`).classList.remove('note-on');
+        });
+        
+
+        // Other MIDI setup or logic here...
+    });
+
+</script>
 </html>
