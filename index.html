@@ -39,7 +39,8 @@
         }
 
         body{
-            color: white;
+            color: rgb(200, 200, 200);
+            -webkit-text-stroke: 1px rgb(84, 84, 84);
             background-color: #0f0f0f;
         }
 
@@ -80,6 +81,7 @@
             transition: var(--a2);
         }
         .s1:hover, .s1.note-on{
+            color: rgb(255,255,255) !important;
             box-shadow: 0 0 0 8vw var(--c1a), inset 0 0 0 0.5vw var(--c1b);
             transition: var(--a1);
         }
@@ -308,7 +310,6 @@
         });
         
 
-        // Other MIDI setup or logic here...
     });
 
 </script>
