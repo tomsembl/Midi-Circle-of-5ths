@@ -6,7 +6,8 @@
     <title>Midi Circle Of Fifths</title>
     <script src="https://cdn.jsdelivr.net/npm/webmidi@latest/dist/iife/webmidi.iife.js"></script>
     <style>
-
+        
+        /*  */
         @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
         :root {
@@ -38,6 +39,7 @@
             --a2: 0.2s;
             --text-on: white;
             --text-off: rgb(131, 131, 131);
+            --bg: #0f0f0f;
 
             --size75: 75vw;
             --size8: 8vw;
@@ -59,12 +61,13 @@
 
         body{
             /* center */
+            font-family: Poppins;
             display: flex;
             justify-content: center;
             align-items: center;
             color: var(--text-off);
             -webkit-text-stroke: 1px rgb(120, 120, 120);
-            background-color: #0f0f0f;
+            background-color: var(--bg);
         }
 
         .circle {
@@ -87,8 +90,17 @@
         .note-label {
             margin-top: var(--size-7);
             font-size: var(--size4);
-            font-family: Poppins;
             text-align: center;
+        }
+
+        .settings{
+            display: flex;
+            flex-direction: row;
+        }
+
+        .switches{
+            display: flex;
+            flex-direction: column;
         }
 
         .s1 {
@@ -227,12 +239,103 @@
         .s12 > .note-label {transform: rotate(-330deg);}
 
         
+        /* The switch - the box around the slider */
+        .switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 22.67px;
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        }
+
+        /* The slider */
+        .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: ;
+        -webkit-transition: .3s;
+        transition: .3s;
+        }
+
+        .slider:before {
+        position: absolute;
+        content: "";
+        height: 17.33px;
+        width: 17.33px;
+        left: 2.67px;
+        bottom: 2.67px;
+        background-color: var(--text-off);
+        -webkit-transition: .3s;
+        transition: .3s;
+        }
+
+        input:checked + .slider {
+        background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+        -webkit-transform: translateX(17.33px);
+        -ms-transform: translateX(17.33px);
+        transform: translateX(17.33px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+        border-radius: 22.67px;
+        }
+
+        .slider.round:before {
+        border-radius: 50%;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            position: absolute;
+            left: -104px;
+            width: 82px;
+            height: 10px; 
+            transform: rotate(270deg);
+            transform-origin: right;
+            accent-color: var(--text-off);
+            background-color: rgb(56, 56, 56);
+            border-radius: 5px;
+        }
+
     
     </style>
 </head>
 <body>
 
     <div class="circle">
+        <div class="settings">
+            <input type="range" onchange="onVolumeChange(this.value)" value="0.05">
+            <div class="switches">
+                Synth&nbsp;
+                <label class="switch">
+                    <input type="checkbox" onchange="onSynthChange(this.checked)">
+                    <span class="slider round"></span>
+                </label>
+                Drone
+                <label class="switch">
+                    <input type="checkbox" onchange="onDroneChange(this.checked)">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
         <div class="slice s1"  id="n1" ><p class="note-label" >1</p></div>
         <div class="slice s2"  id="n2" ><p class="note-label" >5</p></div>
         <div class="slice s3"  id="n3" ><p class="note-label" >2</p></div>
@@ -250,20 +353,6 @@
 
 </body>
 <script>
-    const midiMappings = {
-        'c': 1,
-        'c#': 2,
-        'd': 3,
-        'd#': 4,
-        'e': 5,
-        'f': 6,
-        'f#': 7,
-        'g': 8,
-        'g#': 9,
-        'a': 10,
-        'a#': 11,
-        'b': 12
-    }
     const circleOf5thsMapping = {
         1: 1,
         2: 8,
@@ -291,25 +380,65 @@
         'h': 10,
         'u': 11,
         'j': 12,
-        'k': 1,
-        'o': 2,
-        'l': 3,
-        'p': 4,
-        ';': 5,
-        "'": 6,
-        ']': 7,
+        'k': 13,
+        'o': 14,
+        'l': 15,
+        'p': 16,
+        ';': 17,
+        "'": 18,
+        ']': 19,
+    }
 
+    let ctx, osc, volume, drone
+    let volumeLevel = 0.05
+    let ctxOn = false;
+    let synthOn = false;
+    let type = 'sine'
+    const notes = {}
+
+    function noteOn(note) {
+        if (!ctxOn) {return}
+        osc = ctx.createOscillator();
+        osc.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
+        osc.type = type;
+        osc.connect(volume);
+        osc.start()
+        return osc;
+    }
+
+    function noteOff(note) {
+        if (!ctxOn) {return}
+        osc = notes[note]
+        osc.stop()
+        osc.disconnect(volume)
+        delete notes[note]
+    }
+
+    function playNote(note, on) {
+        normalisedNote = note % 12 + 1
+        document.getElementById(`n${circleOf5thsMapping[normalisedNote]}`).classList.toggle('note-on', on)
+        if (!synthOn) {return}
+        if (on) {
+            if (note in notes) {
+                if (notes[note] != undefined) {return}
+            }
+            notes[note] = noteOn(note)
+        } else {
+            noteOff(note)
+        }
     }
 
     window.addEventListener('keydown', function(e){
         if(e.key in keyboardMappings){
-            document.getElementById(`n${circleOf5thsMapping[keyboardMappings[e.key]]}`).classList.add('note-on');
+            note = keyboardMappings[e.key] + 59
+            playNote(note, true)
         }
     });
 
     window.addEventListener('keyup', function(e){
         if(e.key in keyboardMappings){
-            document.getElementById(`n${circleOf5thsMapping[keyboardMappings[e.key]]}`).classList.remove('note-on');
+            note = keyboardMappings[e.key] + 59
+            playNote(note, false)
         }
     });
 
@@ -318,26 +447,53 @@
             console.error('WebMidi could not be enabled:', err);
             return;
         }
+        
         if (WebMidi.inputs.length === 0) {
             console.warn('No MIDI input devices available.');
             return;
         }
-        const mySynthInput = WebMidi.inputs[0];
-        const mySynthOutput = WebMidi.outputs[0];
+        const mySynthInput = WebMidi.inputs[0]
 
         mySynthInput.channels[1].addListener('noteon', (e) => {
-            const note = `${e.note.name}${e.note.accidental??""}`.toLowerCase()
-            //console.log(note)
-            document.getElementById(`n${circleOf5thsMapping[midiMappings[note]]}`).classList.add('note-on');
-            mySynthOutput.sendNoteOn(60, 127);
-        });
-        mySynthInput.channels[1].addListener('noteoff', (e) => {
-            const note = `${e.note.name}${e.note.accidental??""}`.toLowerCase()
-            document.getElementById(`n${circleOf5thsMapping[midiMappings[note]]}`).classList.remove('note-on');
+            playNote(e.note.number, true)
         });
         
-
+        mySynthInput.channels[1].addListener('noteoff', (e) => {
+            playNote(e.note.number, false)
+        });
     });
+    
+    function initAudio(){
+        if (!ctxOn){
+            ctx = new AudioContext();
+            volume = ctx.createGain();
+            volume.gain.value = volumeLevel;
+            volume.connect(ctx.destination);
+            ctxOn = true
+        }
+    }
+
+    function onDroneChange(checked){
+        if (checked){
+            initAudio()
+            drone = noteOn(48)
+        } else {
+            drone.stop()
+        }
+    }
+
+    function onSynthChange(checked){
+        synthOn = checked
+        if (checked){
+            initAudio()
+        }
+    }
+
+    function onVolumeChange(value){
+        volumeLevel = parseFloat(value)
+        if (volume != undefined) {volume.gain.value = volumeLevel}
+    }
+    
 
 </script>
 </html>
