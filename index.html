@@ -40,6 +40,7 @@
             --text-on: white;
             --text-off: rgb(131, 131, 131);
             --bg: #0f0f0f;
+            --grey2: #1a1a1a;
 
             --size75: 75vw;
             --size8: 8vw;
@@ -66,7 +67,6 @@
             justify-content: center;
             align-items: center;
             color: var(--text-off);
-            -webkit-text-stroke: 1px rgb(120, 120, 120);
             background-color: var(--bg);
         }
 
@@ -262,7 +262,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: ;
+        background-color: var(-grey2);
         -webkit-transition: .3s;
         transition: .3s;
         }
@@ -315,27 +315,92 @@
             border-radius: 5px;
         }
 
-    
+        .piano {
+            display: flex;
+            justify-content: center;
+            align-items: top;
+            margin-right: -25px;
+        }
+
+        .key {
+            width: 15px;
+            height: 50px;
+            border: 0.5px solid var(--text-off);
+            background-color: var(--bg);
+            margin: 0 0.5px;
+            display: flex;
+            justify-content: bottom;
+            align-items: center;
+            flex-direction: column-reverse;
+            font-size: 0.6em;
+        }
+
+        .white {
+            border-radius: 0 0 5px 5px;
+        }
+
+        .black {
+            width: 10px;
+            height: 30px;
+            background-color: var(--text-off);
+            color: var(--bg);
+            border-radius: 0 0 2px 2px;
+            margin-left: -5.5px;
+            margin-right: -5.5px;
+            z-index: 1;
+        }
+
+        .top-bar {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-content: flex-start;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="circle">
-        <div class="settings">
-            <input type="range" onchange="onVolumeChange(this.value)" value="0.05">
-            <div class="switches">
-                Synth&nbsp;
-                <label class="switch">
-                    <input type="checkbox" onchange="onSynthChange(this.checked)">
-                    <span class="slider round"></span>
-                </label>
-                Drone
-                <label class="switch">
-                    <input type="checkbox" onchange="onDroneChange(this.checked)">
-                    <span class="slider round"></span>
-                </label>
+        <div class="top-bar">
+            <div class="settings">
+                <input type="range" onchange="onVolumeChange(this.value)" min="0.00" value="0.05" max="0.2" step="0.02">
+                <div class="switches">
+                    Synth&nbsp;
+                    <label class="switch">
+                        <input type="checkbox" onchange="onSynthChange(this.checked)">
+                        <span class="slider round"></span>
+                    </label>
+                    Drone
+                    <label class="switch">
+                        <input type="checkbox" onchange="onDroneChange(this.checked)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="piano">
+                <div class="key white" id="a">A</div>
+                <div class="key black" id="w">W</div>
+                <div class="key white" id="s">S</div>
+                <div class="key black" id="e">E</div>
+                <div class="key white" id="d">D</div>
+                <div class="key white" id="f">F</div>
+                <div class="key black" id="t">T</div>
+                <div class="key white" id="g">G</div>
+                <div class="key black" id="y">Y</div>
+                <div class="key white" id="h">H</div>
+                <div class="key black" id="u">U</div>
+                <div class="key white" id="j">J</div>
+                <div class="key white" id="k">K</div>
+                <div class="key black" id="o">O</div>
+                <div class="key white" id="l">L</div>
+                <div class="key black" id="p">P</div>
+                <div class="key white" id=";">;</div>
+                <div class="key black" id="'">'</div>
+                <div class="key white" id="]">]</div>
             </div>
         </div>
+        
         <div class="slice s1"  id="n1" ><p class="note-label" >1</p></div>
         <div class="slice s2"  id="n2" ><p class="note-label" >5</p></div>
         <div class="slice s3"  id="n3" ><p class="note-label" >2</p></div>
@@ -349,6 +414,7 @@
         <div class="slice s11" id="n11"><p class="note-label">♭7</p></div>
         <div class="slice s12" id="n12"><p class="note-label" >4</p></div>
     </div>
+
 
 
 </body>
@@ -396,12 +462,15 @@
     let type = 'sine'
     const notes = {}
 
-    function noteOn(note) {
+    function noteOn(note, velocity=127) {
         if (!ctxOn) {return}
         osc = ctx.createOscillator();
         osc.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
         osc.type = type;
-        osc.connect(volume);
+        osc.velocity = ctx.createGain();
+        osc.velocity.gain.value = velocity/127;
+        osc.connect(osc.velocity);
+        osc.velocity.connect(volume);
         osc.start()
         return osc;
     }
@@ -410,7 +479,8 @@
         if (!ctxOn) {return}
         osc = notes[note]
         osc.stop()
-        osc.disconnect(volume)
+        osc.disconnect(osc.velocity)
+        osc.velocity.disconnect(volume)
         delete notes[note]
     }
 
@@ -422,7 +492,7 @@
             if (note in notes) {
                 if (notes[note] != undefined) {return}
             }
-            notes[note] = noteOn(note)
+            notes[note] = noteOn(note,127)
         } else {
             noteOff(note)
         }
