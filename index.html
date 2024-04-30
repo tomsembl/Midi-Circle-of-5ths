@@ -379,7 +379,7 @@
                 </div>
             </div>
             <div class="piano">
-                <div class="key white" id="a">A</div>
+                <div class="key white" id="a">A</div> <!-- onclick="playKBNote('a')" -->
                 <div class="key black" id="w">W</div>
                 <div class="key white" id="s">S</div>
                 <div class="key black" id="e">E</div>
@@ -396,11 +396,10 @@
                 <div class="key white" id="l">L</div>
                 <div class="key black" id="p">P</div>
                 <div class="key white" id=";">;</div>
-                <div class="key black" id="'">'</div>
-                <div class="key white" id="]">]</div>
+                <div class="key white" id="'">'</div>
+                <div class="key black" id="]">]</div>
             </div>
         </div>
-        
         <div class="slice s1"  id="n1" ><p class="note-label" >1</p></div>
         <div class="slice s2"  id="n2" ><p class="note-label" >5</p></div>
         <div class="slice s3"  id="n3" ><p class="note-label" >2</p></div>
@@ -564,6 +563,13 @@
         if (volume != undefined) {volume.gain.value = volumeLevel}
     }
     
+    function playKBNote(key){
+        note = keyboardMappings[key] + 59
+        playNote(note,true)
+        addEventListener("keyup", function(){
+            playNote(note,false)
+        })
+    }
 
 </script>
 </html>
